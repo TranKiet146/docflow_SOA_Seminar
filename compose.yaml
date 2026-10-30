@@ -3,6 +3,7 @@ name: docflow
 services:
   redis:
     image: redis:7.4-alpine
+
     command:
       - redis-server
       - --appendonly
@@ -30,6 +31,11 @@ services:
       SERVICE_NAME: docflow-api
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       QUEUE_NAME: ${QUEUE_NAME:-document-jobs}
+      UPLOAD_DIR: ${UPLOAD_DIR:-/data/uploads}
+      RESULT_DIR: ${RESULT_DIR:-/data/results}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-2}
+      JOB_TIMEOUT_SECONDS: ${JOB_TIMEOUT_SECONDS:-60}
+      RESULT_TTL_SECONDS: ${RESULT_TTL_SECONDS:-86400}
 
     depends_on:
       redis:
@@ -37,6 +43,9 @@ services:
 
     ports:
       - "127.0.0.1:${API_DEBUG_PORT:-8000}:8000"
+
+    volumes:
+      - document-data:/data
 
     healthcheck:
       test:
@@ -59,6 +68,7 @@ services:
 
 volumes:
   redis-data:
+  document-data:
 
 networks:
   edge-net:
