@@ -3,6 +3,8 @@
 Docker Compose - Multi-container deployment - Environment configuration - Networking
 
 # DocFlow
+```markdown
+[![DocFlow CI](https://github.com/TranKiet146/docflow_SOA_Seminar/actions/workflows/ci.yml/badge.svg)](https://github.com/TranKiet146/docflow_SOA_Seminar/actions/workflows/ci.yml)
 
 DocFlow is an asynchronous document processing application used to demonstrate:
 
@@ -40,11 +42,25 @@ Milestone 3 completed:
 
 ## Project status
 
-Milestone 4 completed:
+## Automated verification
 
+Run the end-to-end smoke test:
+
+```bash
+docker compose --profile test run --rm smoke-test
+
+Run Worker recovery verification on Windows:
+powershell -ExecutionPolicy Bypass -File .\scripts\test-recovery.ps1
+
+Run Redis recovery verification:
+powershell -ExecutionPolicy Bypass -File .\scripts\test-redis-recovery.ps1
+
+Project status
+Milestone 6 in progress:
+- Multi-container deployment is operational
 - Nginx is the only public entry point
-- A browser UI uploads documents and displays job progress
-- API requests are reverse-proxied to FastAPI by Docker service name
-- FastAPI is reachable only through the internal Compose network
-- Redis and Worker are isolated from the edge network
-- Generated HTML reports can be downloaded from the UI
+- API, Redis Queue and Worker are network-isolated
+- Document processing generates JSON and HTML reports
+- End-to-end integration testing is automated
+- Worker and Redis recovery scenarios are verified
+- GitHub Actions CI validates every push and pull request
