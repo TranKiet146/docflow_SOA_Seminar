@@ -7,9 +7,8 @@ DocFlow là bài thực hành Docker Compose về xử lý tài liệu bất đ�
 dùng tải file `.txt` hoặc `.md`; API đưa công việc vào Redis Queue; Worker xử
 lý và tạo báo cáo JSON/HTML.
 
-Hướng dẫn này dành cho sinh viên IT đã có kiến thức nền, đã cài Docker Desktop
-nhưng chưa chạy dự án. Tất cả lệnh được thực hiện bằng **PowerShell trong VS
-Code**.
+Đã cài Docker Desktop
+nhưng chưa chạy dự án. Tất cả lệnh được thực hiện bằng **PowerShell**.
 
 Phiên bản hiện tại: **v0.5.0**
 
