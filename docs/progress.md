@@ -44,6 +44,15 @@ Last updated: 2026-10-31
 - Worker outage recovery test
 - Redis outage and readiness recovery test
 
+### Milestone 6 — Continuous integration
+
+- GitHub Actions workflow
+- Compose configuration validation
+- Automated image builds
+- Gateway health verification
+- End-to-end smoke testing on Ubuntu
+- Failure logs and automatic cleanup
+
 ## Confirmed architecture
 
 Browser → Nginx Gateway → FastAPI → Redis Queue → Worker
@@ -72,8 +81,9 @@ Only Nginx publishes a host port.
 
 ## Next milestones
 
-1. GitHub Actions continuous integration
-2. Architecture and deployment documentation
-3. Seminar demonstration script
-4. Presentation content and diagrams
-5. Expected reviewer questions and answers
+## Next milestones
+
+1. Architecture and seminar documentation
+2. Presentation content and diagrams
+3. Expected reviewer questions and answers
+4. Final rehearsal and release tag
