@@ -1,0 +1,9 @@
+services:
+  gateway:
+    image: ghcr.io/trankiet146/docflow-gateway:${DOCFLOW_VERSION:-latest}
+
+  api:
+    image: ghcr.io/trankiet146/docflow-backend:${DOCFLOW_VERSION:-latest}
+
+  worker:
+    image: ghcr.io/trankiet146/docflow-backend:${DOCFLOW_VERSION:-latest}
