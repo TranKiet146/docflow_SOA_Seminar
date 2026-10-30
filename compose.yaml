@@ -1,0 +1,67 @@
+name: docflow
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+
+    volumes:
+      - redis-data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+    networks:
+      - job-net
+
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+
+    environment:
+      SERVICE_NAME: docflow-api
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      QUEUE_NAME: ${QUEUE_NAME:-document-jobs}
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    ports:
+      - "127.0.0.1:${API_DEBUG_PORT:-8000}:8000"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+    networks:
+      - edge-net
+      - job-net
+
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+
+networks:
+  edge-net:
+
+  job-net:
+    internal: true
