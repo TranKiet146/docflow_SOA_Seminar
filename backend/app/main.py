@@ -80,7 +80,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title="DocFlow API",
-    version="0.4.0",
+    version="0.5.0",
     description="Asynchronous document processing API",
     lifespan=lifespan,
 )
@@ -167,7 +167,7 @@ async def readiness():
 async def service_info():
     return {
         "service": SERVICE_NAME,
-        "version": "0.4.0",
+        "version": "0.5.0",
         "hostname": socket.gethostname(),
         "runtime": "Python / FastAPI",
         "redis_url": REDIS_URL,
