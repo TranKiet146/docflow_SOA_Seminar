@@ -1,4 +1,4 @@
-# docflow---SOA-Seminar
+# docflow_SOA_Seminar
 
 Docker Compose - Multi-container deployment - Environment configuration - Networking
 
