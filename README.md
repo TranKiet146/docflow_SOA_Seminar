@@ -28,4 +28,12 @@ line count, reading time, frequent terms and SHA-256 checksum.
 
 ## Project status
 
-Planning and architecture design.
+Milestone 3 completed:
+
+- FastAPI accepts TXT and Markdown uploads
+- Redis Queue stores asynchronous jobs
+- A dedicated Worker processes queued documents
+- API and Worker use the same backend image with different commands
+- Generated JSON and HTML reports are stored in a named volume
+- Worker failure recovery and horizontal scaling are supported
+  Planning and architecture design.

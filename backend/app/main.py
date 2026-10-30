@@ -3,6 +3,8 @@ import socket
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
+import json
+from fastapi.responses import FileResponse
 
 from fastapi import FastAPI, HTTPException, UploadFile, status
 from redis import Redis as SyncRedis
@@ -78,7 +80,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title="DocFlow API",
-    version="0.2.0",
+    version="0.3.0",
     description="Asynchronous document processing API",
     lifespan=lifespan,
 )
@@ -103,7 +105,16 @@ def require_sync_redis() -> SyncRedis:
 
     return sync_redis_client
 
+def fetch_job_or_404(job_id: str) -> Job:
+    connection = require_sync_redis()
 
+    try:
+        return Job.fetch(job_id, connection=connection)
+    except NoSuchJobError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Job not found",
+        ) from exc
 def normalize_job_status(job: Job) -> str:
     current_status = job.get_status(refresh=True)
 
@@ -156,7 +167,7 @@ async def readiness():
 async def service_info():
     return {
         "service": SERVICE_NAME,
-        "version": "0.2.0",
+        "version": "0.3.0",
         "hostname": socket.gethostname(),
         "runtime": "Python / FastAPI",
         "redis_url": REDIS_URL,
@@ -254,13 +265,7 @@ async def create_job(file: UploadFile):
 async def get_job(job_id: str):
     connection = require_sync_redis()
 
-    try:
-        job = Job.fetch(job_id, connection=connection)
-    except NoSuchJobError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Job not found",
-        ) from exc
+    job = fetch_job_or_404(job_id)
 
     job_status = normalize_job_status(job)
 
@@ -279,3 +284,55 @@ async def get_job(job_id: str):
         response["error"] = "Document processing failed"
 
     return response
+@app.get("/api/jobs/{job_id}/result")
+async def get_job_result(job_id: str):
+    job = fetch_job_or_404(job_id)
+    job_status = normalize_job_status(job)
+
+    if job_status != "finished":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Job is not finished. Current status: {job_status}",
+        )
+
+    result_path = RESULT_DIR / f"{job_id}.json"
+
+    if not result_path.is_file():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Generated JSON report was not found",
+        )
+
+    try:
+        return json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Generated JSON report could not be read",
+        ) from exc
+
+
+@app.get("/api/jobs/{job_id}/download")
+async def download_job_report(job_id: str):
+    job = fetch_job_or_404(job_id)
+    job_status = normalize_job_status(job)
+
+    if job_status != "finished":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Job is not finished. Current status: {job_status}",
+        )
+
+    report_path = RESULT_DIR / f"{job_id}.html"
+
+    if not report_path.is_file():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Generated HTML report was not found",
+        )
+
+    return FileResponse(
+        path=report_path,
+        media_type="text/html",
+        filename=f"{job_id}-report.html",
+    )
