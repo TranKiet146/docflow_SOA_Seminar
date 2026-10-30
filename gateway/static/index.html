@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DocFlow</title>
+
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: Inter, system-ui, sans-serif;
+            color: #e8eef8;
+            background: #07111f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(
+                    circle at 15% 0%,
+                    rgba(43, 125, 255, 0.22),
+                    transparent 36rem
+                ),
+                #07111f;
+        }
+
+        main {
+            width: min(900px, calc(100% - 32px));
+            margin: auto;
+            padding: 64px 0;
+        }
+
+        header {
+            margin-bottom: 36px;
+        }
+
+        .eyebrow {
+            color: #70a5ff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+        }
+
+        h1 {
+            max-width: 760px;
+            margin: 12px 0;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            line-height: 1;
+            letter-spacing: -0.05em;
+        }
+
+        .intro {
+            max-width: 650px;
+            color: #9eacc3;
+            line-height: 1.7;
+        }
+
+        .panel {
+            margin-top: 20px;
+            padding: 28px;
+            border: 1px solid #23334d;
+            border-radius: 18px;
+            background: rgba(12, 25, 43, 0.9);
+        }
+
+        .heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .badge {
+            padding: 7px 11px;
+            border: 1px solid #385273;
+            border-radius: 999px;
+            color: #b9c8dd;
+            font-size: 0.8rem;
+        }
+
+        .drop-zone {
+            display: grid;
+            place-items: center;
+            min-height: 170px;
+            padding: 24px;
+            border: 1px dashed #3b5b86;
+            border-radius: 14px;
+            background: rgba(52, 112, 204, 0.08);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .drop-zone:hover {
+            border-color: #70a5ff;
+        }
+
+        #file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+        }
+
+        button,
+        .download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 18px;
+            border: 0;
+            border-radius: 10px;
+            font: inherit;
+            font-weight: 750;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 14px;
+            color: #07111f;
+            background: #78a9ff;
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.65;
+        }
+
+        .download {
+            color: #dce8fb;
+            background: #1d3455;
+        }
+
+        .progress-track {
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #17263d;
+        }
+
+        #progress {
+            width: 0;
+            height: 100%;
+            background: #78a9ff;
+            transition: width 250ms ease;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .metric {
+            padding: 16px;
+            border: 1px solid #233956;
+            border-radius: 12px;
+            background: #0e1d31;
+        }
+
+        .metric span {
+            color: #8998ae;
+            font-size: 0.8rem;
+        }
+
+        .metric strong {
+            display: block;
+            margin-top: 7px;
+            font-size: 1.5rem;
+        }
+
+        #terms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        #terms span {
+            padding: 8px 11px;
+            border-radius: 8px;
+            color: #bed3f4;
+            background: #152a46;
+        }
+
+        code {
+            overflow-wrap: anywhere;
+        }
+
+        .error {
+            border-color: #8d3745;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+            main {
+                padding: 40px 0;
+            }
+
+            .heading {
+                display: block;
+            }
+
+            .badge,
+            .download {
+                margin-top: 12px;
+            }
+
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <header>
+        <p class="eyebrow">ASYNCHRONOUS DOCUMENT PROCESSING</p>
+        <h1>Turn a document into a useful report.</h1>
+
+        <p class="intro">
+            Upload a TXT or Markdown file. DocFlow queues the job,
+            processes it in a background worker and generates JSON
+            and HTML reports.
+        </p>
+    </header>
+
+    <section class="panel">
+        <div class="heading">
+            <h2>Choose a document</h2>
+            <span class="badge">TXT or MD · maximum 2 MB</span>
+        </div>
+
+        <form id="upload-form">
+            <label class="drop-zone" for="file-input">
+                <strong id="file-label">Select a document</strong>
+                <span>Click to browse</span>
+            </label>
+
+            <input
+                id="file-input"
+                name="file"
+                type="file"
+                accept=".txt,.md,text/plain,text/markdown"
+                required
+            >
+
+            <button id="submit-button" type="submit">
+                Process document
+            </button>
+        </form>
+    </section>
+
+    <section id="status-panel" class="panel hidden" aria-live="polite">
+        <div class="heading">
+            <h2>Job status</h2>
+            <span id="status-badge" class="badge">Queued</span>
+        </div>
+
+        <p id="status-message">Waiting for a worker.</p>
+
+        <div class="progress-track">
+            <div id="progress"></div>
+        </div>
+
+        <p>Job ID: <code id="job-id"></code></p>
+    </section>
+
+    <section id="result-panel" class="panel hidden">
+        <div class="heading">
+            <h2>Document report</h2>
+            <a id="download-link" class="download" href="#">
+                Download HTML
+            </a>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <span>Words</span>
+                <strong id="words">0</strong>
+            </div>
+
+            <div class="metric">
+                <span>Lines</span>
+                <strong id="lines">0</strong>
+            </div>
+
+            <div class="metric">
+                <span>Characters</span>
+                <strong id="characters">0</strong>
+            </div>
+
+            <div class="metric">
+                <span>Reading time</span>
+                <strong id="reading-time">0 min</strong>
+            </div>
+        </div>
+
+        <h3>Frequent terms</h3>
+        <div id="terms"></div>
+
+        <p>SHA-256: <code id="checksum"></code></p>
+    </section>
+</main>
+
+<script>
+    const form = document.querySelector("#upload-form");
+    const fileInput = document.querySelector("#file-input");
+    const fileLabel = document.querySelector("#file-label");
+    const submitButton = document.querySelector("#submit-button");
+
+    const statusPanel = document.querySelector("#status-panel");
+    const statusBadge = document.querySelector("#status-badge");
+    const statusMessage = document.querySelector("#status-message");
+    const progress = document.querySelector("#progress");
+    const jobIdElement = document.querySelector("#job-id");
+
+    const resultPanel = document.querySelector("#result-panel");
+    const downloadLink = document.querySelector("#download-link");
+
+    const delay = milliseconds =>
+        new Promise(resolve => setTimeout(resolve, milliseconds));
+
+    fileInput.addEventListener("change", () => {
+        fileLabel.textContent =
+            fileInput.files[0]?.name ?? "Select a document";
+    });
+
+    async function requestJson(url, options = {}) {
+        const response = await fetch(url, options);
+        const contentType =
+            response.headers.get("content-type") ?? "";
+
+        const body = contentType.includes("application/json")
+            ? await response.json()
+            : { detail: await response.text() };
+
+        if (!response.ok) {
+            throw new Error(
+                body.detail ||
+                `Request failed with status ${response.status}`
+            );
+        }
+
+        return body;
+    }
+
+    function showStatus(state, message, percentage) {
+        statusPanel.classList.remove("hidden", "error");
+        statusBadge.textContent = state;
+        statusMessage.textContent = message;
+        progress.style.width =
+            `${Math.max(0, Math.min(percentage, 100))}%`;
+    }
+
+    function showError(error) {
+        statusPanel.classList.remove("hidden");
+        statusPanel.classList.add("error");
+        statusBadge.textContent = "Error";
+        statusMessage.textContent = error.message;
+        progress.style.width = "100%";
+    }
+
+    function renderTerms(items) {
+        const terms = document.querySelector("#terms");
+        terms.replaceChildren();
+
+        if (items.length === 0) {
+            terms.textContent = "No terms found.";
+            return;
+        }
+
+        for (const item of items) {
+            const element = document.createElement("span");
+            element.textContent = `${item.term} · ${item.count}`;
+            terms.append(element);
+        }
+    }
+
+    function renderResult(result, jobId) {
+        document.querySelector("#words").textContent =
+            result.word_count;
+
+        document.querySelector("#lines").textContent =
+            result.line_count;
+
+        document.querySelector("#characters").textContent =
+            result.character_count;
+
+        document.querySelector("#reading-time").textContent =
+            `${result.estimated_reading_minutes} min`;
+
+        document.querySelector("#checksum").textContent =
+            result.sha256;
+
+        downloadLink.href =
+            `/api/jobs/${jobId}/download`;
+
+        renderTerms(result.frequent_terms);
+        resultPanel.classList.remove("hidden");
+    }
+
+    async function waitForJob(jobId) {
+        for (let attempt = 0; attempt < 120; attempt += 1) {
+            const job = await requestJson(
+                `/api/jobs/${jobId}`
+            );
+
+            const percentage = Number(
+                job.meta.progress ??
+                (job.status === "queued" ? 5 : 20)
+            );
+
+            const message =
+                job.meta.progress_message ??
+                `Current status: ${job.status}`;
+
+            showStatus(job.status, message, percentage);
+
+            if (job.status === "finished") {
+                const result = await requestJson(
+                    `/api/jobs/${jobId}/result`
+                );
+
+                showStatus(
+                    "finished",
+                    "Processing completed.",
+                    100
+                );
+
+                renderResult(result, jobId);
+                return;
+            }
+
+            if (job.status === "failed") {
+                throw new Error(
+                    job.error || "Document processing failed."
+                );
+            }
+
+            await delay(1000);
+        }
+
+        throw new Error(
+            "The job is still processing. Check again later."
+        );
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+            showError(
+                new Error("Choose a TXT or Markdown file first.")
+            );
+            return;
+        }
+
+        submitButton.disabled = true;
+        resultPanel.classList.add("hidden");
+        showStatus("uploading", "Uploading document...", 2);
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const job = await requestJson("/api/jobs", {
+                method: "POST",
+                body: formData
+            });
+
+            jobIdElement.textContent = job.job_id;
+
+            showStatus(
+                job.status,
+                "The job is waiting for a worker.",
+                5
+            );
+
+            await waitForJob(job.job_id);
+        } catch (error) {
+            showError(error);
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

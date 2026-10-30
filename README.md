@@ -37,3 +37,14 @@ Milestone 3 completed:
 - Generated JSON and HTML reports are stored in a named volume
 - Worker failure recovery and horizontal scaling are supported
   Planning and architecture design.
+
+## Project status
+
+Milestone 4 completed:
+
+- Nginx is the only public entry point
+- A browser UI uploads documents and displays job progress
+- API requests are reverse-proxied to FastAPI by Docker service name
+- FastAPI is reachable only through the internal Compose network
+- Redis and Worker are isolated from the edge network
+- Generated HTML reports can be downloaded from the UI

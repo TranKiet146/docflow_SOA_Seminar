@@ -1,6 +1,39 @@
 name: docflow
 
 services:
+  gateway:
+    image: docflow-gateway:0.4.0
+
+    build:
+      context: ./gateway
+
+    depends_on:
+      api:
+        condition: service_healthy
+
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:80"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost/health"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+    networks:
+      - edge-net
+
+    restart: unless-stopped
+
   redis:
     image: redis:7.4-alpine
 
@@ -24,7 +57,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: docflow-backend:0.3.0
+    image: docflow-backend:0.4.0
 
     build:
       context: ./backend
@@ -43,8 +76,8 @@ services:
       redis:
         condition: service_healthy
 
-    ports:
-      - "127.0.0.1:${API_DEBUG_PORT:-8000}:8000"
+    expose:
+      - "8000"
 
     volumes:
       - document-data:/data
@@ -55,7 +88,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"
         ]
       interval: 5s
       timeout: 3s
@@ -69,7 +102,7 @@ services:
     restart: unless-stopped
 
   worker:
-    image: docflow-backend:0.3.0
+    image: docflow-backend:0.4.0
 
     command:
       - rq

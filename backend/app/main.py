@@ -80,7 +80,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title="DocFlow API",
-    version="0.3.0",
+    version="0.4.0",
     description="Asynchronous document processing API",
     lifespan=lifespan,
 )
@@ -167,7 +167,7 @@ async def readiness():
 async def service_info():
     return {
         "service": SERVICE_NAME,
-        "version": "0.3.0",
+        "version": "0.4.0",
         "hostname": socket.gethostname(),
         "runtime": "Python / FastAPI",
         "redis_url": REDIS_URL,
@@ -263,7 +263,6 @@ async def create_job(file: UploadFile):
 
 @app.get("/api/jobs/{job_id}")
 async def get_job(job_id: str):
-    connection = require_sync_redis()
 
     job = fetch_job_or_404(job_id)
 
