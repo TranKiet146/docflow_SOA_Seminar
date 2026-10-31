@@ -24,12 +24,12 @@ flowchart LR
     Worker <--> Data
 ```
 
-| Service | Nhiệm vụ | Truy cập từ máy host |
-|---|---|---|
-| `gateway` | Giao diện web và reverse proxy | `127.0.0.1:8080` |
-| `api` | Kiểm tra file, tạo và theo dõi job | Qua Gateway |
-| `redis` | Queue và trạng thái job | Không công khai |
-| `worker` | Xử lý tài liệu, tạo báo cáo | Không công khai |
+| Service   | Nhiệm vụ                           | Truy cập từ máy host |
+| --------- | ---------------------------------- | -------------------- |
+| `gateway` | Giao diện web và reverse proxy     | `127.0.0.1:8080`     |
+| `api`     | Kiểm tra file, tạo và theo dõi job | Qua Gateway          |
+| `redis`   | Queue và trạng thái job            | Không công khai      |
+| `worker`  | Xử lý tài liệu, tạo báo cáo        | Không công khai      |
 
 Chỉ Gateway công khai cổng. API, Redis và Worker trao đổi qua Docker network.
 
@@ -113,12 +113,12 @@ docker compose ps
 
 Lần build đầu có thể mất vài phút. Trạng thái mong đợi:
 
-| Service | Trạng thái |
-|---|---|
-| `gateway` | `healthy` |
-| `api` | `healthy` |
-| `redis` | `healthy` |
-| `worker` | `Up` |
+| Service   | Trạng thái |
+| --------- | ---------- |
+| `gateway` | `healthy`  |
+| `api`     | `healthy`  |
+| `redis`   | `healthy`  |
+| `worker`  | `Up`       |
 
 Worker không có healthcheck riêng nên trạng thái `Up` là đúng. Nếu service còn
 `health: starting`, chờ khoảng 10 giây rồi chạy lại `docker compose ps`.
@@ -323,10 +323,10 @@ docker compose down --volumes
 
 ## CI/CD
 
-| Workflow | Kích hoạt | Kết quả |
-|---|---|---|
-| [CI](https://github.com/TranKiet146/docflow_SOA_Seminar/actions/workflows/ci.yml) | Push/PR vào `main` | Build và chạy integration test |
-| [CD](https://github.com/TranKiet146/docflow_SOA_Seminar/actions/workflows/release.yml) | Push tag `v*.*.*` | Build và publish image lên GHCR |
+| Workflow                                                                               | Kích hoạt          | Kết quả                         |
+| -------------------------------------------------------------------------------------- | ------------------ | ------------------------------- |
+| [CI](https://github.com/TranKiet146/docflow_SOA_Seminar/actions/workflows/ci.yml)      | Push/PR vào `main` | Build và chạy integration test  |
+| [CD](https://github.com/TranKiet146/docflow_SOA_Seminar/actions/workflows/release.yml) | Push tag `v*.*.*`  | Build và publish image lên GHCR |
 
 CD của dự án là **Continuous Delivery**: image được phát hành tự động, còn việc
 triển khai được thực hiện bằng lệnh ở bước 10.
@@ -410,7 +410,7 @@ CI, CD và release `v0.5.0`.
 Phạm vi không bao gồm authentication, xử lý PDF/Office, Kubernetes, multi-host
 deployment và automatic production deployment.
 
-
+```mermaid
 flowchart TB
     subgraph S["APPLICATION — DOCFLOW"]
         A["Gateway Service — Nginx"]
@@ -439,3 +439,4 @@ flowchart TB
     classDef container fill:#e2f4e8,stroke:#419d67,color:#13542d
     class I image
     class P,N,F,R,W container
+```
