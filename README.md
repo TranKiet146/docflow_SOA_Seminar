@@ -416,17 +416,17 @@ deployment và automatic production deployment.
 flowchart TB
     subgraph S["APPLICATION — DOCFLOW"]
         direction TB
-        A["Gateway Service<br/>(Nginx)"]
-        B["API Service<br/>(FastAPI)"]
-        C["Redis Service<br/>(Queue)"]
-        D["Worker Service<br/>(RQ)"]
+        A["&nbsp;&nbsp;Gateway Service&nbsp;&nbsp;<br/>(Nginx)"]
+        B["&nbsp;&nbsp;API Service&nbsp;&nbsp;<br/>(FastAPI)"]
+        C["&nbsp;&nbsp;Redis Service&nbsp;&nbsp;<br/>(Queue)"]
+        D["&nbsp;&nbsp;Worker Service&nbsp;&nbsp;<br/>(RQ)"]
     end
 
-    I["Single Docker Image<br/>(docflow-all-in-one)"]
+    I["&nbsp;&nbsp;Single Docker Image&nbsp;&nbsp;<br/>&nbsp;&nbsp;(docflow-all-in-one)&nbsp;&nbsp;"]
 
     subgraph K["MỘT DOCKER CONTAINER"]
         direction TB
-        P["Process Manager<br/>(Supervisor)"]
+        P["&nbsp;&nbsp;Process Manager&nbsp;&nbsp;<br/>(Supervisor)"]
         N["Nginx Process"]
         F["FastAPI Process"]
         R["Redis Process"]
