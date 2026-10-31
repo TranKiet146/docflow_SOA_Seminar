@@ -415,24 +415,25 @@ deployment và automatic production deployment.
 ## 1. Single-container 
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#172554", "lineColor": "#64748b"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
-    subgraph Services["Service Layer"]
-        direction TB
-        S1["Gateway - Nginx"]
-        S2["API - FastAPI"]
-        S3["Queue - Redis"]
-        S4["Worker - RQ"]
+    subgraph SL["SERVICE LAYER"]
+        direction LR
+        S1["Gateway<br/>Nginx"]
+        S2["API<br/>FastAPI"]
+        S3["Queue<br/>Redis"]
+        S4["Worker<br/>RQ"]
     end
 
-    IMG["Single Docker Image"]
+    IMG["Docker Image<br/>All-in-One"]
 
-    subgraph Container["Single Docker Container"]
+    subgraph CL["SINGLE DOCKER CONTAINER"]
         direction TB
-        PM["Process Manager"]
-        P1["Nginx Process"]
-        P2["FastAPI Process"]
-        P3["Redis Process"]
-        P4["RQ Worker Process"]
+        PM["Process Manager<br/>Supervisor"]
+        P1["Nginx<br/>Process"]
+        P2["FastAPI<br/>Process"]
+        P3["Redis<br/>Process"]
+        P4["RQ Worker<br/>Process"]
 
         PM --> P1
         PM --> P2
@@ -440,6 +441,22 @@ flowchart TB
         PM --> P4
     end
 
-    Services --> IMG
+    S1 --> IMG
+    S2 --> IMG
+    S3 --> IMG
+    S4 --> IMG
     IMG --> PM
+
+    classDef service fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1E40AF
+    classDef image fill:#FEF3C7,stroke:#D97706,stroke-width:3px,color:#92400E
+    classDef manager fill:#F3E8FF,stroke:#9333EA,stroke-width:2px,color:#6B21A8
+    classDef process fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#166534
+
+    class S1,S2,S3,S4 service
+    class IMG image
+    class PM manager
+    class P1,P2,P3,P4 process
+
+    style SL fill:#EFF6FF,stroke:#60A5FA,stroke-width:2px,color:#1E40AF
+    style CL fill:#F0FDF4,stroke:#22C55E,stroke-width:3px,color:#166534
 ```
