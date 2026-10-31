@@ -422,7 +422,7 @@ flowchart TB
         D["Worker Service<br/>(RQ)"]
     end
 
-    S --> I["Một Docker Image<br/>docflow-all-in-one"]
+    S --> I[" Single Docker Image<br/>(docflow-all-in-one)"]
     I --> K
 
     subgraph K["MỘT DOCKER CONTAINER"]
