@@ -413,7 +413,7 @@ deployment và automatic production deployment.
 ## Presentation Diagram:
 
 ```mermaid
-%%{init: {"theme": "white", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#FFFFFF", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
+%%{init: {"theme": "default", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#000000", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
     subgraph SL["SERVICE LAYER"]
         direction LR
@@ -458,7 +458,7 @@ flowchart TB
     style CL fill:#0D1117,stroke:#91B9A3,stroke-width:1.5px,color:#FFFFFF
 ```
 ```mermaid
-%%{init: {"theme": "white", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#FFFFFF", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
+%%{init: {"theme": "default", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#000000", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
     subgraph SL["SERVICE LAYER"]
         direction LR
