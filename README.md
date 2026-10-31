@@ -412,10 +412,8 @@ deployment và automatic production deployment.
 
 ## Presentation Diagram:
 
-## 1. Single-container 
-
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#172554", "lineColor": "#64748b"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#334155", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
     subgraph SL["SERVICE LAYER"]
         direction LR
@@ -447,16 +445,58 @@ flowchart TB
     S4 --> IMG
     IMG --> PM
 
-    classDef service fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1E40AF
-    classDef image fill:#FEF3C7,stroke:#D97706,stroke-width:3px,color:#92400E
-    classDef manager fill:#F3E8FF,stroke:#9333EA,stroke-width:2px,color:#6B21A8
-    classDef process fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#166534
+    classDef default fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#334155
+    classDef image fill:#FFFFFF,stroke:#94A3B8,stroke-width:2px,color:#334155
+    classDef manager fill:#FFFFFF,stroke:#94A3B8,stroke-width:1.5px,color:#334155
 
-    class S1,S2,S3,S4 service
     class IMG image
     class PM manager
-    class P1,P2,P3,P4 process
 
-    style SL fill:#EFF6FF,stroke:#60A5FA,stroke-width:2px,color:#1E40AF
-    style CL fill:#F0FDF4,stroke:#22C55E,stroke-width:3px,color:#166534
+    style SL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
+    style CL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
+```
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#334155", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
+flowchart TB
+    subgraph SL["SERVICE LAYER"]
+        direction LR
+        S1["Gateway<br/>Nginx"]
+        S2["API<br/>FastAPI"]
+        S3["Queue<br/>Redis"]
+        S4["Worker<br/>RQ"]
+    end
+
+    subgraph IL["IMAGE LAYER"]
+        direction LR
+        I1["Nginx<br/>Image"]
+        I2["Backend<br/>Image"]
+        I3["Redis<br/>Image"]
+    end
+
+    subgraph CL["CONTAINER LAYER"]
+        direction LR
+        C1["Gateway<br/>Container"]
+        C2["API<br/>Container"]
+        C3["Redis<br/>Container"]
+        C4["Worker<br/>Container"]
+    end
+
+    S1 --> I1
+    S2 --> I2
+    S3 --> I3
+    S4 --> I2
+
+    I1 --> C1
+    I2 --> C2
+    I2 --> C4
+    I3 --> C3
+
+    classDef default fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#334155
+    classDef image fill:#FFFFFF,stroke:#94A3B8,stroke-width:1.5px,color:#334155
+
+    class I1,I2,I3 image
+
+    style SL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
+    style IL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
+    style CL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
 ```
