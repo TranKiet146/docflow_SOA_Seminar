@@ -445,16 +445,19 @@ flowchart TB
     S4 --> IMG
     IMG --> PM
 
-    classDef default fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#334155
-    classDef image fill:#FFFFFF,stroke:#94A3B8,stroke-width:2px,color:#334155
-    classDef manager fill:#FFFFFF,stroke:#94A3B8,stroke-width:1.5px,color:#334155
+    classDef default fill:transparent,stroke:#CBD5E1,stroke-width:1px,color:#334155
+    classDef service fill:transparent,stroke:#93B4D8,stroke-width:1.5px,color:#334155
+    classDef image fill:transparent,stroke:#D6B77A,stroke-width:1.5px,color:#334155
+    classDef process fill:transparent,stroke:#91B9A3,stroke-width:1.5px,color:#334155
 
+    class S1,S2,S3,S4 service
     class IMG image
-    class PM manager
+    class PM,P1,P2,P3,P4 process
 
-    style SL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
-    style CL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
+    style SL fill:transparent,stroke:#93B4D8,stroke-width:1.5px,color:#64748B
+    style CL fill:transparent,stroke:#91B9A3,stroke-width:1.5px,color:#64748B
 ```
+
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#334155", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
@@ -491,12 +494,16 @@ flowchart TB
     I2 --> C4
     I3 --> C3
 
-    classDef default fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#334155
-    classDef image fill:#FFFFFF,stroke:#94A3B8,stroke-width:1.5px,color:#334155
+    classDef default fill:transparent,stroke:#CBD5E1,stroke-width:1px,color:#334155
+    classDef service fill:transparent,stroke:#93B4D8,stroke-width:1.5px,color:#334155
+    classDef image fill:transparent,stroke:#D6B77A,stroke-width:1.5px,color:#334155
+    classDef container fill:transparent,stroke:#91B9A3,stroke-width:1.5px,color:#334155
 
+    class S1,S2,S3,S4 service
     class I1,I2,I3 image
+    class C1,C2,C3,C4 container
 
-    style SL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
-    style IL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
-    style CL fill:transparent,stroke:#94A3B8,stroke-width:1.5px,color:#64748B
+    style SL fill:transparent,stroke:#93B4D8,stroke-width:1.5px,color:#64748B
+    style IL fill:transparent,stroke:#D6B77A,stroke-width:1.5px,color:#64748B
+    style CL fill:transparent,stroke:#91B9A3,stroke-width:1.5px,color:#64748B
 ```
