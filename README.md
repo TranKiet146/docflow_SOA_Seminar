@@ -409,3 +409,33 @@ CI, CD và release `v0.5.0`.
 
 Phạm vi không bao gồm authentication, xử lý PDF/Office, Kubernetes, multi-host
 deployment và automatic production deployment.
+
+
+flowchart TB
+    subgraph S["APPLICATION — DOCFLOW"]
+        A["Gateway Service — Nginx"]
+        B["API Service — FastAPI"]
+        C["Redis Service — Queue"]
+        D["Worker Service — RQ"]
+    end
+
+    S --> I["Một Docker Image<br/>docflow-all-in-one"]
+    I --> K
+
+    subgraph K["MỘT DOCKER CONTAINER"]
+        direction TB
+        P["Process Manager — Supervisor"]
+        N["Nginx Process"]
+        F["FastAPI Process"]
+        R["Redis Process"]
+        W["Worker Process"]
+        P --> N
+        P --> F
+        P --> R
+        P --> W
+    end
+
+    classDef image fill:#e0ecff,stroke:#4182d1,color:#143c70
+    classDef container fill:#e2f4e8,stroke:#419d67,color:#13542d
+    class I image
+    class P,N,F,R,W container
