@@ -81,8 +81,6 @@ Only Nginx publishes a host port.
 
 ## Next milestones
 
-## Next milestones
-
 1. Architecture and seminar documentation
 2. Presentation content and diagrams
 3. Expected reviewer questions and answers
