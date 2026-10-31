@@ -416,17 +416,17 @@ deployment và automatic production deployment.
 flowchart TB
     subgraph S["APPLICATION — DOCFLOW"]
         direction TB
-        A["&nbsp;&nbsp;Gateway Service&nbsp;&nbsp;<br/>(Nginx)"]
-        B["&nbsp;&nbsp;API Service&nbsp;&nbsp;<br/>(FastAPI)"]
-        C["&nbsp;&nbsp;Redis Service&nbsp;&nbsp;<br/>(Queue)"]
-        D["&nbsp;&nbsp;Worker Service&nbsp;&nbsp;<br/>(RQ)"]
+        A["Gateway Service<br/>(Nginx)"]
+        B["API Service<br/>(FastAPI)"]
+        C["Redis Service<br/>(Queue)"]
+        D["Worker Service<br/>(RQ)"]
     end
 
-    I["&nbsp;&nbsp;Single Docker Image&nbsp;&nbsp;<br/>&nbsp;&nbsp;(docflow-all-in-one)&nbsp;&nbsp;"]
+    I["Single Docker Image<br/>( docflow - all - in - one )"]
 
     subgraph K["MỘT DOCKER CONTAINER"]
         direction TB
-        P["&nbsp;&nbsp;Process Manager&nbsp;&nbsp;<br/>(Supervisor)"]
+        P["Process Manager<br/>(Supervisor)"]
         N["Nginx Process"]
         F["FastAPI Process"]
         R["Redis Process"]
@@ -440,8 +440,14 @@ flowchart TB
     S --> I
     I --> K
 
-    classDef image fill:#e0ecff,stroke:#4182d1,color:#143c70
-    classDef container fill:#e2f4e8,stroke:#419d67,color:#13542d
-    class I image
-    class P,N,F,R,W container
+    style I fill:#e0ecff,stroke:#4182d1,color:#143c70,width:280px
+    style A width:240px
+    style B width:240px
+    style C width:240px
+    style D width:240px
+    style P width:240px
+    style N width:240px
+    style F width:240px
+    style R width:240px
+    style W width:240px
 ```
