@@ -415,13 +415,14 @@ deployment và automatic production deployment.
 ```mermaid
 flowchart TB
     subgraph S["APPLICATION — DOCFLOW"]
-        A["Gateway Service — Nginx"]
-        B["API Service — FastAPI"]
-        C["Redis Service — Queue"]
-        D["Worker Service — RQ"]
+        direction TB
+        A["Gateway Service<br/>(Nginx)"]
+        B["API Service<br/>(FastAPI)"]
+        C["Redis Service<br/>(Queue)"]
+        D["Worker Service<br/>(RQ)"]
     end
 
-    S --> I["Single Docker Image<br/>docflow-all-in-one"]
+    S --> I["Một Docker Image<br/>docflow-all-in-one"]
     I --> K
 
     subgraph K["MỘT DOCKER CONTAINER"]
