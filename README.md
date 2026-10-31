@@ -412,42 +412,34 @@ deployment và automatic production deployment.
 
 ## Presentation Diagram:
 
+## 1. Single-container 
+
 ```mermaid
 flowchart TB
-    subgraph S["APPLICATION — DOCFLOW"]
+    subgraph Services["Service Layer"]
         direction TB
-        A["Gateway Service<br/>(Nginx)"]
-        B["API Service<br/>(FastAPI)"]
-        C["Redis Service<br/>(Queue)"]
-        D["Worker Service<br/>(RQ)"]
+        S1["Gateway - Nginx"]
+        S2["API - FastAPI"]
+        S3["Queue - Redis"]
+        S4["Worker - RQ"]
     end
 
-    I["Single Docker Image<br/>( docflow - all - in - one )"]
+    IMG["Single Docker Image"]
 
-    subgraph K["MỘT DOCKER CONTAINER"]
+    subgraph Container["Single Docker Container"]
         direction TB
-        P["Process Manager<br/>(Supervisor)"]
-        N["Nginx Process"]
-        F["FastAPI Process"]
-        R["Redis Process"]
-        W["Worker Process"]
-        P --> N
-        P --> F
-        P --> R
-        P --> W
+        PM["Process Manager"]
+        P1["Nginx Process"]
+        P2["FastAPI Process"]
+        P3["Redis Process"]
+        P4["RQ Worker Process"]
+
+        PM --> P1
+        PM --> P2
+        PM --> P3
+        PM --> P4
     end
 
-    S --> I
-    I --> K
-
-    style I fill:#e0ecff,stroke:#4182d1,color:#143c70,width:280px
-    style A width:240px
-    style B width:240px
-    style C width:240px
-    style D width:240px
-    style P width:240px
-    style N width:240px
-    style F width:240px
-    style R width:240px
-    style W width:240px
+    Services --> IMG
+    IMG --> PM
 ```
