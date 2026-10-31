@@ -413,7 +413,7 @@ deployment và automatic production deployment.
 ## Presentation Diagram:
 
 ```mermaid
-%%{init: {"theme": "default", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#000000", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
+%%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "primaryColor": "#FFFFFF", "primaryTextColor": "#000000", "primaryBorderColor": "#CBD5E1", "lineColor": "#94A3B8", "fontFamily": "Arial", "fontSize": "16px"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
     subgraph SL["SERVICE LAYER"]
         direction LR
@@ -445,20 +445,21 @@ flowchart TB
     S4 --> IMG
     IMG --> PM
 
-    classDef default fill:#111827,stroke:#CBD5E1,stroke-width:1px,color:#FFFFFF
-    classDef service fill:#111827,stroke:#93B4D8,stroke-width:1.5px,color:#FFFFFF
-    classDef image fill:#111827,stroke:#D6B77A,stroke-width:1.5px,color:#FFFFFF
-    classDef process fill:#111827,stroke:#91B9A3,stroke-width:1.5px,color:#FFFFFF
+    classDef default fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#000000
+    classDef service fill:#FFFFFF,stroke:#93B4D8,stroke-width:1.5px,color:#000000
+    classDef image fill:#FFFFFF,stroke:#D6B77A,stroke-width:1.5px,color:#000000
+    classDef process fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 
     class S1,S2,S3,S4 service
     class IMG image
     class PM,P1,P2,P3,P4 process
 
-    style SL fill:#0D1117,stroke:#93B4D8,stroke-width:1.5px,color:#FFFFFF
-    style CL fill:#0D1117,stroke:#91B9A3,stroke-width:1.5px,color:#FFFFFF
+    style SL fill:#FFFFFF,stroke:#93B4D8,stroke-width:1.5px,color:#000000
+    style CL fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 ```
+
 ```mermaid
-%%{init: {"theme": "default", "themeVariables": {"fontFamily": "Arial", "fontSize": "16px", "primaryTextColor": "#000000", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
+%%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "primaryColor": "#FFFFFF", "primaryTextColor": "#000000", "primaryBorderColor": "#CBD5E1", "lineColor": "#94A3B8", "fontFamily": "Arial", "fontSize": "16px"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
     subgraph SL["SERVICE LAYER"]
         direction LR
@@ -493,16 +494,16 @@ flowchart TB
     I2 --> C4
     I3 --> C3
 
-    classDef default fill:#111827,stroke:#CBD5E1,stroke-width:1px,color:#FFFFFF
-    classDef service fill:#111827,stroke:#93B4D8,stroke-width:1.5px,color:#FFFFFF
-    classDef image fill:#111827,stroke:#D6B77A,stroke-width:1.5px,color:#FFFFFF
-    classDef container fill:#111827,stroke:#91B9A3,stroke-width:1.5px,color:#FFFFFF
+    classDef default fill:#FFFFFF,stroke:#CBD5E1,stroke-width:1px,color:#000000
+    classDef service fill:#FFFFFF,stroke:#93B4D8,stroke-width:1.5px,color:#000000
+    classDef image fill:#FFFFFF,stroke:#D6B77A,stroke-width:1.5px,color:#000000
+    classDef container fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 
     class S1,S2,S3,S4 service
     class I1,I2,I3 image
     class C1,C2,C3,C4 container
 
-    style SL fill:#0D1117,stroke:#93B4D8,stroke-width:1.5px,color:#FFFFFF
-    style IL fill:#0D1117,stroke:#D6B77A,stroke-width:1.5px,color:#FFFFFF
-    style CL fill:#0D1117,stroke:#91B9A3,stroke-width:1.5px,color:#FFFFFF
+    style SL fill:#FFFFFF,stroke:#93B4D8,stroke-width:1.5px,color:#000000
+    style IL fill:#FFFFFF,stroke:#D6B77A,stroke-width:1.5px,color:#000000
+    style CL fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 ```
