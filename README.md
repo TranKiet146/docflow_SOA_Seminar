@@ -410,6 +410,8 @@ CI, CD và release `v0.5.0`.
 Phạm vi không bao gồm authentication, xử lý PDF/Office, Kubernetes, multi-host
 deployment và automatic production deployment.
 
+## Presentation Diagram:
+
 ```mermaid
 flowchart TB
     subgraph S["APPLICATION — DOCFLOW"]
