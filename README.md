@@ -422,12 +422,11 @@ flowchart TB
         D["Worker Service<br/>(RQ)"]
     end
 
-    S --> I[" Single Docker Image<br/>(docflow-all-in-one)"]
-    I --> K
+    I["Single Docker Image<br/>(docflow-all-in-one)"]
 
     subgraph K["MỘT DOCKER CONTAINER"]
         direction TB
-        P["Process Manager — Supervisor"]
+        P["Process Manager<br/>(Supervisor)"]
         N["Nginx Process"]
         F["FastAPI Process"]
         R["Redis Process"]
@@ -437,6 +436,9 @@ flowchart TB
         P --> R
         P --> W
     end
+
+    S --> I
+    I --> K
 
     classDef image fill:#e0ecff,stroke:#4182d1,color:#143c70
     classDef container fill:#e2f4e8,stroke:#419d67,color:#13542d
