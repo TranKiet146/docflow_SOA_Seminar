@@ -411,7 +411,7 @@ Phạm vi không bao gồm authentication, xử lý PDF/Office, Kubernetes, mult
 deployment và automatic production deployment.
 
 ## Presentation Diagram:
-
+SINGLE CONTAINER
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "primaryColor": "#FFFFFF", "primaryTextColor": "#000000", "primaryBorderColor": "#CBD5E1", "lineColor": "#94A3B8", "fontFamily": "Arial", "fontSize": "16px"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
@@ -457,7 +457,7 @@ flowchart TB
     style SL fill:#FFFFFF,stroke:#93B4D8,stroke-width:1.5px,color:#000000
     style CL fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 ```
-
+MULTICONTAINER
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "primaryColor": "#FFFFFF", "primaryTextColor": "#000000", "primaryBorderColor": "#CBD5E1", "lineColor": "#94A3B8", "fontFamily": "Arial", "fontSize": "16px"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
@@ -507,7 +507,7 @@ flowchart TB
     style IL fill:#FFFFFF,stroke:#D6B77A,stroke-width:1.5px,color:#000000
     style CL fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 ```
-
+ENVIROMENT
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "fontFamily": "Arial", "fontSize": "16px", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
