@@ -507,3 +507,40 @@ flowchart TB
     style IL fill:#FFFFFF,stroke:#D6B77A,stroke-width:1.5px,color:#000000
     style CL fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
 ```
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "fontFamily": "Arial", "fontSize": "16px", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 50, "rankSpacing": 55, "useMaxWidth": true}}}%%
+flowchart TB
+    A[".env File"]
+    B["Docker Compose"]
+    C["Variable Interpolation"]
+    D["Environment Configuration"]
+
+    subgraph CL["CONTAINER LAYER"]
+        direction LR
+        E["API Container"]
+        F["Worker Container"]
+    end
+
+    G["Application<br/>Reads Environment Variables"]
+    H["Application Behavior"]
+
+    A --> C
+    B --> C
+    C --> D
+    D --> E
+    D --> F
+    E --> G
+    F --> G
+    G --> H
+
+    classDef config fill:#FFFFFF,stroke:#D6B77A,stroke-width:1.5px,color:#000000
+    classDef compose fill:#FFFFFF,stroke:#93B4D8,stroke-width:1.5px,color:#000000
+    classDef container fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
+
+    class A,C config
+    class B,D compose
+    class E,F,G,H container
+
+    style CL fill:#FFFFFF,stroke:#91B9A3,stroke-width:1.5px,color:#000000
+```
