@@ -509,21 +509,21 @@ flowchart TB
 ```
 
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "fontFamily": "Arial", "fontSize": "16px", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 50, "rankSpacing": 55, "useMaxWidth": true}}}%%
+%%{init: {"theme": "base", "themeVariables": {"background": "#FFFFFF", "fontFamily": "Arial", "fontSize": "16px", "lineColor": "#94A3B8"}, "flowchart": {"htmlLabels": true, "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}}}%%
 flowchart TB
-    A[".env File"]
-    B["Docker Compose"]
-    C["Variable Interpolation"]
-    D["Environment Configuration"]
+    A[".env"]
+    B["Docker<br/>Compose"]
+    C["Variable<br/>Interpolation"]
+    D["Env<br/>Config"]
 
     subgraph CL["CONTAINER LAYER"]
         direction LR
-        E["API Container"]
-        F["Worker Container"]
+        E["API<br/>Container"]
+        F["Worker<br/>Container"]
     end
 
-    G["Application<br/>Reads Environment Variables"]
-    H["Application Behavior"]
+    G["Application<br/>Reads Env"]
+    H["Application<br/>Behavior"]
 
     A --> C
     B --> C
