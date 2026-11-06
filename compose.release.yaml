@@ -7,3 +7,5 @@ services:
 
   worker:
     image: ghcr.io/trankiet146/docflow-backend:${DOCFLOW_VERSION:-latest}
+
+    
