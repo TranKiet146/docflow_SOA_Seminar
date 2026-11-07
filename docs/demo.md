@@ -287,8 +287,6 @@ Kết quả:
 }
 ```
 
-Endpoint này thực sự gửi lệnh kiểm tra đến Redis.
-
 Kết quả `redis: ok` chứng minh:
 
 - API và Redis cùng tham gia `job-net`.
@@ -352,3 +350,118 @@ ghi cố định IP vì Docker DNS cho phép sử dụng service name `redis`.
 Docker Networking kiểm soát phạm vi giao tiếp giữa các container. Docker DNS
 giúp những container cùng network tìm nhau bằng service name thay vì ghi cố
 định địa chỉ IP.
+
+## 5. Kiểm tra Nginx Reverse Proxy
+
+### Bước 1 — Kiểm tra Gateway và API
+
+```powershell
+docker compose ps gateway api
+```
+
+Kết quả cần thấy:
+
+```text
+gateway   healthy
+api       healthy
+```
+
+### Bước 2 — Mở FastAPI Swagger UI qua Gateway
+
+```powershell
+Start-Process http://localhost:8080/docs
+```
+
+Trong Swagger UI:
+
+1. Mở `GET /api/info`.
+2. Chọn **Try it out**.
+3. Chọn **Execute**.
+
+Kết quả ví dụ:
+
+```json
+{
+  "service": "docflow-api",
+  "version": "0.5.0",
+  "runtime": "Python / FastAPI",
+  "redis_url": "redis://redis:6379/0",
+  "queue": "document-jobs"
+}
+```
+
+Đường đi của request:
+
+```text
+Browser
+→ localhost:8080
+→ Nginx Gateway
+→ location /api/
+→ proxy_pass http://api:8000
+→ FastAPI
+```
+
+### Bước 3 — Gửi request bằng PowerShell
+
+```powershell
+curl.exe -i http://localhost:8080/api/info
+```
+
+Kết quả cần thấy:
+
+```text
+HTTP/1.1 200 OK
+Server: nginx
+Content-Type: application/json
+```
+
+Phần JSON được FastAPI xử lý và trả về thông qua Nginx.
+
+## 6. Kiểm tra Request trong Container Logs
+
+### Bước 1 — Xem log Gateway
+
+```powershell
+docker compose logs --tail=30 gateway
+```
+
+Tìm request:
+
+```text
+GET /api/info HTTP/1.1
+```
+
+Gateway log chứng minh Nginx đã nhận request từ client.
+
+### Bước 2 — Xem log API
+
+```powershell
+docker compose logs --tail=30 api
+```
+
+Tìm request:
+
+```text
+GET /api/info
+```
+
+API log chứng minh FastAPI đã nhận và xử lý request được Nginx chuyển tiếp.
+
+### Bước 3 — Xem hai log đồng thời
+
+```powershell
+docker compose logs --tail=30 gateway api
+```
+
+Kết quả cần quan sát:
+
+```text
+gateway  | GET /api/info ...
+api      | GET /api/info ...
+```
+
+Cùng một request xuất hiện ở cả hai container:
+
+```text
+Client → Gateway nhận request → API xử lý request → Gateway trả response
+```
