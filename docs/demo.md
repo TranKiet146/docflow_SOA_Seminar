@@ -1,6 +1,6 @@
 # DocFlow seminar demonstration
 
-## Demo — Multi-container Deployment
+## Multi-Container Deployment
 
 ### 1. Start DocFlow
 
@@ -80,7 +80,7 @@ Job được Worker lấy từ Redis Queue và xử lý thành công.
 
 _Note: JSON chỉ minh họa trường `status`, không phải toàn bộ response._
 
-## Environment Configuration — Thay đổi Gateway Port
+## Environment Configuration
 
 ### Mục tiêu
 
@@ -191,8 +191,7 @@ Kết quả:
 
 > `APP_PORT` được tách khỏi source code và đặt trong `.env`. Nhờ đó, chúng ta thay đổi cổng triển khai mà không sửa chương trình và không build lại Docker image.
 
-
-## 4. Thực hành Docker Networking bằng Website và FastAPI
+## Docker Networking - Website+FastAPI
 
 ### Bước 1 — Khởi động hệ thống
 
@@ -349,6 +348,7 @@ Kết quả ví dụ:
 ghi cố định IP vì Docker DNS cho phép sử dụng service name `redis`.
 
 ### Kết luận
+
 Docker Networking kiểm soát phạm vi giao tiếp giữa các container. Docker DNS
 giúp những container cùng network tìm nhau bằng service name thay vì ghi cố
 định địa chỉ IP.
