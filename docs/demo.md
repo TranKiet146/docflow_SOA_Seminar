@@ -1,46 +1,85 @@
-# DocFlow seminar demonstration
+# DocFlow Seminar Demonstration
 
-## Multi-Container Deployment
+> Chạy các lệnh tại thư mục gốc của dự án. Port mặc định của Gateway là `8080`.
 
-### 1. Start DocFlow
+## I. Docker Multi-Container
+
+### 1. Khởi động hệ thống
+
+**Thực hiện:**
 
 ```powershell
 docker compose up -d --build
+docker compose ps
 ```
 
-**Kết quả:** Gateway, API, Redis và Worker hoạt động.
+**Kết quả:**
+
+```text
+gateway   healthy
+api       healthy
+redis     healthy
+worker    Up
+```
+
+**Giải thích:** Docker Compose build image, tạo network, volume và khởi động bốn container của DocFlow.
 
 Mở Swagger UI:
 
-http://localhost:8080/docs
+```powershell
+Start-Process http://localhost:8080/docs
+```
 
-### 2. Stop Worker
+### 2. Dừng Worker
+
+**Thực hiện:**
 
 ```powershell
 docker compose stop worker
+docker compose ps -a
 ```
 
-**Kết quả:** Worker dừng, Gateway, API và Redis vẫn hoạt động.
+**Kết quả:**
 
-### 3. Upload File — Swagger UI
+```text
+worker    Exited
+gateway   healthy
+api       healthy
+redis     healthy
+```
 
-Trong Swagger UI:
+**Giải thích:** Worker dừng độc lập; Gateway, API và Redis vẫn tiếp tục hoạt động.
 
-1. Chọn `POST /api/jobs`.
-2. Nhấn **Try it out**.
-3. Upload một file `.txt` hoặc `.md` nhỏ.
-4. Nhấn **Execute**.
+### 3. Tạo Job khi Worker đã dừng
+
+**Thực hiện trên Swagger UI:**
+
+1. Mở `POST /api/jobs`.
+2. Chọn **Try it out**.
+3. Chọn file `.txt` hoặc `.md`.
+4. Chọn **Execute**.
 5. Sao chép `job_id` từ response.
 
-**Kết quả:** API vẫn tiếp nhận file và tạo job dù Worker đã dừng.
+**Kết quả:**
 
-### 4. Check Job Status — Swagger UI
+```json
+{
+  "job_id": "example-job-id",
+  "status": "queued"
+}
+```
 
-1. Chọn `GET /api/jobs/{job_id}`.
-2. Nhập `job_id` vừa nhận.
-3. Nhấn **Execute**.
+**Giải thích:** API vẫn tiếp nhận file và đưa job vào Redis Queue dù Worker không hoạt động.
 
-**Kết quả mong đợi:**
+### 4. Kiểm tra trạng thái Job
+
+**Thực hiện trên Swagger UI:**
+
+1. Mở `GET /api/jobs/{job_id}`.
+2. Nhập `job_id`.
+3. Chọn **Execute**.
+
+**Kết quả:**
 
 ```json
 {
@@ -48,23 +87,34 @@ Trong Swagger UI:
 }
 ```
 
-Job đang chờ trong Redis Queue vì Worker đã dừng.
+**Giải thích:** Job vẫn được Redis lưu trong hàng đợi và đang chờ Worker xử lý.
 
-### 5. Restart Worker
+### 5. Khởi động lại Worker
+
+**Thực hiện:**
 
 ```powershell
 docker compose start worker
+docker compose ps worker
 ```
 
-**Kết quả:** Worker hoạt động trở lại mà không cần restart các container khác.
+**Kết quả:**
 
-### 6. Check Job Status Again — Swagger UI
+```text
+worker    Up
+```
 
-Gọi lại:
+**Giải thích:** Worker hoạt động trở lại mà không cần restart Gateway, API hoặc Redis.
 
-`GET /api/jobs/{job_id}`
+### 6. Kiểm tra lại trạng thái Job
 
-**Kết quả mong đợi sau khi xử lý hoàn tất:**
+**Thực hiện trên Swagger UI:**
+
+```text
+GET /api/jobs/{job_id}
+```
+
+**Kết quả sau khi xử lý hoàn tất:**
 
 ```json
 {
@@ -72,69 +122,55 @@ Gọi lại:
 }
 ```
 
-Job được Worker lấy từ Redis Queue và xử lý thành công.
+**Giải thích:** Worker lấy job đang chờ từ Redis Queue, xử lý file và cập nhật trạng thái thành `finished`.
+
+> JSON chỉ minh họa các trường quan trọng, không phải toàn bộ response.
 
 ---
 
-**Conclusion:** Multi-container cho phép Worker dừng và khởi động lại độc lập. API và Redis vẫn tiếp nhận, lưu trữ jobs trong thời gian Worker không hoạt động; khi Worker trở lại, các jobs đang chờ có thể tiếp tục được xử lý.
-
-_Note: JSON chỉ minh họa trường `status`, không phải toàn bộ response._
-
-## Environment Configuration
-
-### Mục tiêu
-
-Thay đổi cổng truy cập Gateway từ `8080` sang `8081` thông qua `.env`, không sửa source code và không build lại image.
+## II. Docker Environment Configuration
 
 ### 1. Chuẩn bị file `.env`
 
-Nếu dự án chưa có `.env`:
+**Thực hiện:**
 
 ```powershell
 if (!(Test-Path .env)) {
     Copy-Item .env.example .env
 }
-```
 
-Kiểm tra giá trị hiện tại:
-
-```powershell
 Get-Content .env | Select-String "^APP_PORT="
 ```
 
-Kết quả:
+**Kết quả:**
 
 ```text
 APP_PORT=8080
 ```
 
-### 2. Kiểm tra cấu hình đã được Compose xử lý
+**Giải thích:** `.env` chứa giá trị cấu hình có thể thay đổi mà không cần sửa source code.
+
+### 2. Kiểm tra cấu hình hiện tại
+
+**Thực hiện:**
 
 ```powershell
 docker compose config | Select-String "published"
-```
-
-Kết quả cần thấy:
-
-```text
-published: "8080"
-```
-
-Nếu hệ thống đang chạy:
-
-```powershell
 docker compose port gateway 80
 ```
 
-Kết quả:
+**Kết quả:**
 
 ```text
+published: "8080"
 127.0.0.1:8080
 ```
 
-### 3. Thay đổi port trong `.env`
+**Giải thích:** Compose đã thay `${APP_PORT:-8080}` bằng giá trị `8080` và ánh xạ host port này đến port `80` của Gateway.
 
-Mở file:
+### 3. Thay đổi `APP_PORT`
+
+**Thực hiện:**
 
 ```powershell
 code .env
@@ -154,19 +190,68 @@ APP_PORT=8081
 
 Lưu file.
 
-### 4. Kiểm tra trên trình duyệt
+**Kết quả:**
+
+```text
+APP_PORT=8081
+```
+
+**Giải thích:** Chỉ giá trị cấu hình triển khai thay đổi; source code và Docker image không thay đổi.
+
+### 4. Kiểm tra Variable Interpolation
+
+**Thực hiện:**
+
+```powershell
+docker compose config | Select-String "published"
+```
+
+**Kết quả:**
+
+```text
+published: "8081"
+```
+
+**Giải thích:** Docker Compose đã đọc giá trị mới từ `.env` và tạo Compose Configuration cuối cùng với port `8081`.
+
+### 5. Áp dụng cấu hình mới
+
+**Thực hiện:**
+
+```powershell
+docker compose up -d gateway
+docker compose port gateway 80
+```
+
+**Kết quả:**
+
+```text
+127.0.0.1:8081
+```
+
+**Giải thích:** Compose tạo lại Gateway container với port mapping mới. Không cần `--build` vì không thay đổi source code hoặc Dockerfile.
+
+> Không sử dụng `docker compose restart gateway` vì `restart` không tạo lại container với cấu hình port mới.
+
+### 6. Kiểm tra trên trình duyệt
+
+**Thực hiện:**
 
 ```powershell
 Start-Process http://localhost:8081/docs
 ```
 
-Kết quả mong đợi:
+**Kết quả:**
 
 - Swagger UI vẫn hoạt động.
-- Gateway được truy cập qua port `8081`.
+- Gateway được truy cập qua host port `8081`.
 - Nginx bên trong container vẫn chạy tại port `80`.
 
-### 5. Khôi phục sau khi demo
+**Giải thích:** `.env` chỉ thay đổi host port; chương trình Nginx bên trong container không cần thay đổi.
+
+### 7. Khôi phục port mặc định
+
+**Thực hiện:**
 
 Đổi `.env` về:
 
@@ -181,26 +266,27 @@ docker compose up -d gateway
 docker compose port gateway 80
 ```
 
-Kết quả:
+**Kết quả:**
 
 ```text
 127.0.0.1:8080
 ```
 
-### Kết luận trình bày
+**Giải thích:** Gateway trở lại port mặc định để tiếp tục các phần demo sau.
 
-> `APP_PORT` được tách khỏi source code và đặt trong `.env`. Nhờ đó, chúng ta thay đổi cổng triển khai mà không sửa chương trình và không build lại Docker image.
+---
 
-## Docker Networking - Website+FastAPI
+## III. Docker Network
 
-### Bước 1 — Khởi động hệ thống
+### 1. Kiểm tra trạng thái các Service
+
+**Thực hiện:**
 
 ```powershell
-docker compose up -d --build
 docker compose ps
 ```
 
-Kết quả cần thấy:
+**Kết quả:**
 
 ```text
 gateway   healthy
@@ -209,164 +295,27 @@ redis     healthy
 worker    Up
 ```
 
-### Bước 2 — Kiểm tra Browser kết nối Gateway
+**Giải thích:** Các container đã tham gia những Docker Network được khai báo trong `compose.yaml`.
 
-Mở giao diện DocFlow:
+### 2. Kiểm tra Browser kết nối Gateway
+
+**Thực hiện:**
 
 ```powershell
 Start-Process http://localhost:8080
 ```
 
-Luồng kết nối:
+**Kết quả:** Giao diện DocFlow được hiển thị.
+
+**Giải thích:** Browser truy cập Gateway qua port `8080`. API và Redis không publish port trực tiếp ra máy host.
 
 ```text
 Browser → localhost:8080 → Gateway
 ```
 
-Kết luận:
+### 3. Kiểm tra Gateway kết nối API
 
-- Browser chỉ truy cập Gateway qua port `8080`.
-- API và Redis không publish port trực tiếp ra máy host.
-
-### Bước 3 — Kiểm tra Gateway kết nối API
-
-Mở FastAPI Swagger UI thông qua Gateway:
-
-```powershell
-Start-Process http://localhost:8080/docs
-```
-
-Trong Swagger UI, mở endpoint:
-
-```text
-GET /api/info
-```
-
-Chọn **Try it out** → **Execute**.
-
-Kết quả ví dụ:
-
-```json
-{
-  "service": "docflow-api",
-  "version": "0.5.0",
-  "runtime": "Python / FastAPI",
-  "redis_url": "redis://redis:6379/0",
-  "queue": "document-jobs"
-}
-```
-
-Kết luận:
-
-```text
-Browser → Gateway → api:8000
-```
-
-Gateway tìm thấy API bằng service name `api` thông qua Docker DNS trên
-`edge-net`.
-
-### Bước 4 — Kiểm tra API kết nối Redis
-
-Trong Swagger UI, mở endpoint:
-
-```text
-GET /health/ready
-```
-
-Chọn **Try it out** → **Execute**.
-
-Kết quả:
-
-```json
-{
-  "status": "ready",
-  "service": "docflow-api",
-  "dependencies": {
-    "redis": "ok"
-  }
-}
-```
-
-Kết quả `redis: ok` chứng minh:
-
-- API và Redis cùng tham gia `job-net`.
-- API phân giải được service name `redis`.
-- API kết nối thành công đến `redis:6379`.
-
-Luồng hoàn chỉnh:
-
-```text
-Browser → Gateway → API → Redis
-```
-
-## 5. Thực hành Network Isolation
-
-### Bước 1 — Kiểm tra Gateway có tìm thấy Redis không
-
-```powershell
-docker compose exec gateway getent hosts redis
-```
-
-Kết quả mong đợi:
-
-```text
-Không trả về địa chỉ IP
-```
-
-Giải thích:
-
-- Gateway chỉ tham gia `edge-net`.
-- Redis chỉ tham gia `job-net`.
-- Gateway không thể phân giải hoặc kết nối trực tiếp đến Redis.
-
-### Bước 2 — Kiểm tra Gateway tìm thấy API
-
-```powershell
-docker compose exec gateway wget -qO- http://api:8000/api/info
-```
-
-Kết quả: API trả về JSON thông tin service.
-
-Điều này chứng minh Gateway và API có thể giao tiếp vì cùng tham gia
-`edge-net`.
-
-### Bước 3 — Kiểm tra API tìm thấy Redis
-
-```powershell
-docker compose exec api python -c "import socket; print(socket.gethostbyname('redis'))"
-```
-
-Kết quả ví dụ:
-
-```text
-172.20.0.2
-```
-
-Địa chỉ IP thực tế có thể thay đổi khi container được tạo lại. API không cần
-ghi cố định IP vì Docker DNS cho phép sử dụng service name `redis`.
-
-### Kết luận
-
-Docker Networking kiểm soát phạm vi giao tiếp giữa các container. Docker DNS
-giúp những container cùng network tìm nhau bằng service name thay vì ghi cố
-định địa chỉ IP.
-
-## 5. Kiểm tra Nginx Reverse Proxy
-
-### Bước 1 — Kiểm tra Gateway và API
-
-```powershell
-docker compose ps gateway api
-```
-
-Kết quả cần thấy:
-
-```text
-gateway   healthy
-api       healthy
-```
-
-### Bước 2 — Mở FastAPI Swagger UI qua Gateway
+**Thực hiện:**
 
 ```powershell
 Start-Process http://localhost:8080/docs
@@ -378,7 +327,7 @@ Trong Swagger UI:
 2. Chọn **Try it out**.
 3. Chọn **Execute**.
 
-Kết quả ví dụ:
+**Kết quả:**
 
 ```json
 {
@@ -390,7 +339,141 @@ Kết quả ví dụ:
 }
 ```
 
-Đường đi của request:
+**Giải thích:** Gateway tìm thấy service `api` bằng Docker DNS vì Gateway và API cùng tham gia `edge-net`.
+
+```text
+Browser → Gateway → api:8000
+```
+
+### 4. Kiểm tra API kết nối Redis
+
+**Thực hiện trên Swagger UI:**
+
+1. Mở `GET /health/ready`.
+2. Chọn **Try it out**.
+3. Chọn **Execute**.
+
+**Kết quả:**
+
+```json
+{
+  "status": "ready",
+  "service": "docflow-api",
+  "dependencies": {
+    "redis": "ok"
+  }
+}
+```
+
+**Giải thích:** API đã phân giải service name `redis` và kết nối thành công đến `redis:6379` qua `job-net`.
+
+```text
+Browser → Gateway → API → Redis
+```
+
+---
+
+## IV. Docker Network Isolation
+
+### 1. Kiểm tra Gateway không tìm thấy Redis
+
+**Thực hiện:**
+
+```powershell
+docker compose exec gateway getent hosts redis
+```
+
+**Kết quả:**
+
+```text
+Không trả về địa chỉ IP
+```
+
+**Giải thích:** Gateway chỉ tham gia `edge-net`, trong khi Redis chỉ tham gia `job-net`. Vì vậy Gateway không thể phân giải trực tiếp service name `redis`.
+
+### 2. Kiểm tra Gateway tìm thấy API
+
+**Thực hiện:**
+
+```powershell
+docker compose exec gateway wget -qO- http://api:8000/api/info
+```
+
+**Kết quả:** API trả về JSON thông tin service.
+
+```json
+{
+  "service": "docflow-api",
+  "version": "0.5.0"
+}
+```
+
+**Giải thích:** Gateway và API cùng tham gia `edge-net`, nên Gateway có thể gọi API bằng địa chỉ `api:8000`.
+
+### 3. Kiểm tra API tìm thấy Redis
+
+**Thực hiện:**
+
+```powershell
+docker compose exec api python -c "import socket; print(socket.gethostbyname('redis'))"
+```
+
+**Kết quả ví dụ:**
+
+```text
+172.20.0.2
+```
+
+**Giải thích:** Docker DNS chuyển service name `redis` thành IP hiện tại của Redis container trên `job-net`. IP có thể thay đổi khi container được tạo lại.
+
+---
+
+## V. Nginx Reverse Proxy
+
+### 1. Kiểm tra Gateway và API
+
+**Thực hiện:**
+
+```powershell
+docker compose ps gateway api
+```
+
+**Kết quả:**
+
+```text
+gateway   healthy
+api       healthy
+```
+
+**Giải thích:** Gateway và API đã sẵn sàng để thực hiện luồng Reverse Proxy.
+
+### 2. Gửi Request qua Swagger UI
+
+**Thực hiện:**
+
+```powershell
+Start-Process http://localhost:8080/docs
+```
+
+Trong Swagger UI:
+
+1. Mở `GET /api/info`.
+2. Chọn **Try it out**.
+3. Chọn **Execute**.
+
+**Kết quả:**
+
+```json
+{
+  "service": "docflow-api",
+  "version": "0.5.0",
+  "runtime": "Python / FastAPI",
+  "redis_url": "redis://redis:6379/0",
+  "queue": "document-jobs"
+}
+```
+
+**Giải thích:** Browser gửi request đến Gateway. Nginx chuyển request `/api/info` đến FastAPI tại `api:8000`.
 
 ```text
 Browser
@@ -401,13 +484,15 @@ Browser
 → FastAPI
 ```
 
-### Bước 3 — Gửi request bằng PowerShell
+### 3. Kiểm tra HTTP Response
+
+**Thực hiện:**
 
 ```powershell
 curl.exe -i http://localhost:8080/api/info
 ```
 
-Kết quả cần thấy:
+**Kết quả:**
 
 ```text
 HTTP/1.1 200 OK
@@ -415,52 +500,26 @@ Server: nginx
 Content-Type: application/json
 ```
 
-Phần JSON được FastAPI xử lý và trả về thông qua Nginx.
+Phía dưới header là JSON do FastAPI trả về.
 
-## 6. Kiểm tra Request trong Container Logs
+**Giải thích:** `Server: nginx` cho thấy request đi qua Nginx; nội dung JSON được FastAPI xử lý và trả lại thông qua Gateway.
 
-### Bước 1 — Xem log Gateway
+### 4. Kiểm tra Container Logs
 
-```powershell
-docker compose logs --tail=30 gateway
-```
-
-Tìm request:
-
-```text
-GET /api/info HTTP/1.1
-```
-
-Gateway log chứng minh Nginx đã nhận request từ client.
-
-### Bước 2 — Xem log API
-
-```powershell
-docker compose logs --tail=30 api
-```
-
-Tìm request:
-
-```text
-GET /api/info
-```
-
-API log chứng minh FastAPI đã nhận và xử lý request được Nginx chuyển tiếp.
-
-### Bước 3 — Xem hai log đồng thời
+**Thực hiện:**
 
 ```powershell
 docker compose logs --tail=30 gateway api
 ```
 
-Kết quả cần quan sát:
+**Kết quả cần quan sát:**
 
 ```text
 gateway  | GET /api/info ...
 api      | GET /api/info ...
 ```
 
-Cùng một request xuất hiện ở cả hai container:
+**Giải thích:** Gateway log cho thấy Nginx đã nhận request. API log cho thấy FastAPI đã nhận và xử lý request được Nginx chuyển tiếp.
 
 ```text
 Client → Gateway nhận request → API xử lý request → Gateway trả response
